@@ -67,7 +67,7 @@ class WeatherScraper(HTMLParser):
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 3):
             self.daily_temps.update({'Mean': data})
 
-    def generate_data_url(self, start_year, end_year=datetime.now().year, month):
+    def generate_data_url(self, start_year, end_year=datetime.now().year):
         data_url_list = []
         startYear = int(start_year)
         endYear = end_year
