@@ -21,12 +21,23 @@ class WeatherScraper(HTMLParser):
         self.daily_temps = dict()
         self.temps_data = dict()
         self.url = url
+        self.start_year = None
+        self.is_select = False
+        self.is_option = False
 
     def handle_starttag(self, tag, attrs):
         if (tag == 'tbody'):
             self.is_tbody = True
         if (tag == 'tr'):
             self.is_tr = True
+        if (tag == 'select'):
+            for attr in attrs:
+                if (attr[0] == 'id' and attr[1] == 'Year1'):
+                    self.is_select = True
+                    break
+
+        if (tag == 'option' and self.is_select):
+            self.is_option = True
 
         if (tag == 'abbr' and self.is_tbody and self.is_tr):
             if(attrs[0][1] == 'Average' or attrs[0][1] == 'Extreme'):
@@ -55,12 +66,20 @@ class WeatherScraper(HTMLParser):
             self.date = ''
         if (tag == 'tbody'):
             self.is_tbody = False
+        if (tag == 'select' or self.start_year is not None):
+            self.is_select = False
+            self.is_option = False
 
     def handle_data(self, data):
+        if (self.is_option and self.is_select):
+            self.start_year = data
+
         if(data == "Sum"):
             self.end_of_row = True
         if(data == "E" or data == "LegendE"):
             return
+        if(data == 'M' or data == "LegendM" or data == "\u00a0"):
+            data = ''
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 1):
             self.daily_temps.update({'Max': data})
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 2):
@@ -68,7 +87,7 @@ class WeatherScraper(HTMLParser):
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 3):
             self.daily_temps.update({'Mean': data})
 
-    def generate_data_url(self, start_year=1996, end_year=datetime.now().year):
+    def generate_data_url(self, start_year, end_year=datetime.now().year):
         data_url_list = []
         startYear = int(start_year)
         endYear = end_year
@@ -93,24 +112,18 @@ class WeatherScraper(HTMLParser):
 
     def scrape_weather(self, start_year=None):
         weather = dict()
-        if(self.url == '' or start_year != None):
-            data_url_list = self.generate_data_url(start_year)
-            for url in data_url_list:
-                print(url)
-                myparser = WeatherScraper()
-                with urllib.request.urlopen(url) as response:
-                    html = str(response.read())
-                myparser.feed(html)
-                weather.update(myparser.temps_data)
-        else:
-            data_url_list = self.generate_data_url(1996)
-            for url in data_url_list:
-                print(url)
-                myparser = WeatherScraper()
-                with urllib.request.urlopen(url) as response:
-                    html = str(response.read())
-                myparser.feed(html)
-                weather.update(myparser.temps_data)
+        with urllib.request.urlopen(self.url) as response:
+            html = str(response.read())
+        self.feed(html)
+
+        data_url_list = self.generate_data_url(self.start_year)
+        for url in data_url_list:
+            print(url)
+            myparser = WeatherScraper()
+            with urllib.request.urlopen(url) as response:
+                html = str(response.read())
+            myparser.feed(html)
+            weather.update(myparser.temps_data)
         return weather
 
 
