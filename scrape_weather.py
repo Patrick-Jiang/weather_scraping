@@ -1,4 +1,4 @@
-
+import json
 import urllib.request
 from html.parser import HTMLParser
 from datetime import datetime
@@ -13,7 +13,6 @@ class WeatherScraper(HTMLParser):
         self.is_td = False
         self.end_of_row = False
         self.end_of_td = False
-        self.no_data = False
         self.estimated = False
         self.date = ''
         self.td_counter = 0
@@ -25,6 +24,7 @@ class WeatherScraper(HTMLParser):
             self.is_tbody = True
         if (tag == 'tr'):
             self.is_tr = True
+
         if (tag == 'abbr' and self.is_tbody and self.is_tr):
             if(attrs[0][1] == 'Average' or attrs[0][1] == 'Extreme'):
                 self.end_of_row = True
@@ -33,29 +33,29 @@ class WeatherScraper(HTMLParser):
                 output_format = "%Y-%m-%d"
                 self.date = datetime.strptime(
                     attrs[0][1], input_format).strftime(output_format)
-        if (tag == 'td' and self.is_tbody and self.is_tr and self.end_of_row == False and self.no_data == False):
+
+        if (tag == 'td' and self.is_tbody and self.is_tr and self.end_of_row == False):
             self.is_td = True
             self.end_of_td = False
             self.td_counter += 1
-            # print('111')
 
     def handle_endtag(self, tag):
         if (tag == 'td'):
             self.is_td = False
         if (tag == 'td' and self.td_counter == 3):
             self.end_of_td = True
-            self.temps_data.update({self.date: self.daily_temps})
+            if(self.date != ''):
+                self.temps_data.update({self.date: self.daily_temps})
             self.daily_temps = {}
             self.td_counter = 0
             self.is_tr = False
+            self.date = ''
         if (tag == 'tbody'):
             self.is_tbody = False
 
     def handle_data(self, data):
         if(data == "Sum"):
             self.end_of_row = True
-        if(data.replace('\xa0', '') == '' and self.is_tbody and self.is_tr and self.end_of_row == False):
-            self.no_data = True
 
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 1):
             self.daily_temps.update({'Max': data})
@@ -65,9 +65,10 @@ class WeatherScraper(HTMLParser):
             self.daily_temps.update({'Mean': data})
 
 
+
 def generate_data_url():
     data_url_list = []
-    startYear = 2019
+    startYear = 1996
     endYear = 2020
     endMonth = 12
     endDay = 31
@@ -103,3 +104,5 @@ for url in data_url_list:
     weather.update(myparser.temps_data)
 
 pprint(weather)
+with open( 'weather_all.json', 'w') as fp:
+    json.dump(weather, fp)
