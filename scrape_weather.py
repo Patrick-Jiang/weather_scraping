@@ -8,7 +8,7 @@ from pprint import pprint
 
 class WeatherScraper(HTMLParser):
 
-    def __init__(self):
+    def __init__(self, url=None):
         HTMLParser.__init__(self)
         self.is_tbody = False
         self.is_tr = False
@@ -20,6 +20,7 @@ class WeatherScraper(HTMLParser):
         self.td_counter = 0
         self.daily_temps = dict()
         self.temps_data = dict()
+        self.url = url
 
     def handle_starttag(self, tag, attrs):
         if (tag == 'tbody'):
@@ -67,7 +68,7 @@ class WeatherScraper(HTMLParser):
         if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 3):
             self.daily_temps.update({'Mean': data})
 
-    def generate_data_url(self, start_year, end_year=datetime.now().year):
+    def generate_data_url(self, start_year=1996, end_year=datetime.now().year):
         data_url_list = []
         startYear = int(start_year)
         endYear = end_year
@@ -90,12 +91,19 @@ class WeatherScraper(HTMLParser):
                     data_url_list.append(url)
         return data_url_list
 
-    def scrape_weather(self, start_year=1996):
-        data_url_list = self.generate_data_url(start_year)
+    def scrape_weather(self, start_year=None):
         weather = dict()
-        for url in data_url_list:
+        if(self.url == '' or start_year != None):
+            data_url_list = self.generate_data_url(start_year)
+            for url in data_url_list:
+                myparser = WeatherScraper()
+                with urllib.request.urlopen(url) as response:
+                    html = str(response.read())
+                myparser.feed(html)
+                weather.update(myparser.temps_data)
+        else:
             myparser = WeatherScraper()
-            with urllib.request.urlopen(url) as response:
+            with urllib.request.urlopen(self.url) as response:
                 html = str(response.read())
             myparser.feed(html)
             weather.update(myparser.temps_data)
@@ -103,8 +111,9 @@ class WeatherScraper(HTMLParser):
 
 
 if __name__ == '__main__':
-    test = WeatherScraper()
-    weather = test.scrape_weather()
+    test = WeatherScraper(
+        'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
+    weather = test.scrape_weather(2017)
     with open('weather_all.json', 'w') as fp:
         json.dump(weather, fp)
     pprint(weather)
