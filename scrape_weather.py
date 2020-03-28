@@ -96,24 +96,28 @@ class WeatherScraper(HTMLParser):
         if(self.url == '' or start_year != None):
             data_url_list = self.generate_data_url(start_year)
             for url in data_url_list:
+                print(url)
                 myparser = WeatherScraper()
                 with urllib.request.urlopen(url) as response:
                     html = str(response.read())
                 myparser.feed(html)
                 weather.update(myparser.temps_data)
         else:
-            myparser = WeatherScraper()
-            with urllib.request.urlopen(self.url) as response:
-                html = str(response.read())
-            myparser.feed(html)
-            weather.update(myparser.temps_data)
+            data_url_list = self.generate_data_url(1996)
+            for url in data_url_list:
+                print(url)
+                myparser = WeatherScraper()
+                with urllib.request.urlopen(url) as response:
+                    html = str(response.read())
+                myparser.feed(html)
+                weather.update(myparser.temps_data)
         return weather
 
 
 if __name__ == '__main__':
     test = WeatherScraper(
         'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
-    weather = test.scrape_weather(2017)
+    weather = test.scrape_weather()
     with open('weather_all.json', 'w') as fp:
         json.dump(weather, fp)
     pprint(weather)
