@@ -93,7 +93,7 @@ class WeatherScraper(HTMLParser):
         endYear = end_year
         endMonth = 12
         endDay = 31
-        for x in reversed(range(startYear, endYear+1)):
+        for x in (range(startYear, endYear+1)):
             if(datetime.now().year == x):
                 for y in range(1, datetime.now().month + 1):
                     current_year = x
