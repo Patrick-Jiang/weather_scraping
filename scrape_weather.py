@@ -7,8 +7,10 @@ from pprint import pprint
 
 
 class WeatherScraper(HTMLParser):
+    """Weather scraper inherit from HTMLParser."""
 
     def __init__(self, url=None):
+        """Initialize class variables."""
         HTMLParser.__init__(self)
         self.is_tbody = False
         self.is_tr = False
@@ -26,6 +28,7 @@ class WeatherScraper(HTMLParser):
         self.is_option = False
 
     def handle_starttag(self, tag, attrs):
+        """Handle the start tags"""
         if (tag == 'tbody'):
             self.is_tbody = True
         if (tag == 'tr'):
@@ -54,6 +57,7 @@ class WeatherScraper(HTMLParser):
             self.td_counter += 1
 
     def handle_endtag(self, tag):
+        """Handle the end tags"""
         if (tag == 'td'):
             self.is_td = False
         if (tag == 'td' and self.td_counter == 3):
@@ -71,6 +75,7 @@ class WeatherScraper(HTMLParser):
             self.is_option = False
 
     def handle_data(self, data):
+        """Handle the data"""
         if (self.is_option and self.is_select):
             self.start_year = data
 
@@ -88,6 +93,7 @@ class WeatherScraper(HTMLParser):
             self.daily_temps.update({'Mean': data})
 
     def generate_data_url(self, start_year, end_year=datetime.now().year):
+        """This method is to generate all the urls"""
         data_url_list = []
         startYear = int(start_year)
         endYear = end_year
@@ -111,6 +117,7 @@ class WeatherScraper(HTMLParser):
         return data_url_list
 
     def scrape_weather(self, start_year=None):
+        """This is main method to scrape the data"""
         weather = dict()
         with urllib.request.urlopen(self.url) as response:
             html = str(response.read())
