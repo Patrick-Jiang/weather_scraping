@@ -21,23 +21,24 @@ class PlotOperations():
           self.month = x
           year = str(year)
           cursor.execute("SELECT avg_temp FROM weather WHERE sample_date LIKE ?", ('%{}%'.format(year +'-'+ str(x).zfill(2)),))
-
           rows = cursor.fetchall()
-
           for row in rows:
             if '{}'.format(row[0]) != '':
               monthly_list.append(float('{}'.format(row[0])))
           self.weather_data.update({self.month : monthly_list})
 
+  def create_plot(self,data):
+    start_year = self.start_year
+    end_year = self.end_year
+    fig, ax = plt.subplots()
+    ax.boxplot(data.values())
+    ax.set_xticklabels(data.keys())
+    plt.xlabel('Month')
+    plt.ylabel('Temperature (Celsius)')
+    plt.title('Monthly Temperature Distribution for : '+ str(start_year) + ' to ' + str(end_year))
+    plt.show()
 
-test = PlotOperations(2000,2017)
-test.create_weather_data()
-# print(test.weather_data)
-
-fig, ax = plt.subplots()
-ax.boxplot(test.weather_data.values())
-ax.set_xticklabels(test.weather_data.keys())
-
-
-
-plt.show()
+if __name__ == '__main__':
+  test = PlotOperations(2000,2017)
+  test.create_weather_data()
+  test.create_plot(test.weather_data)
