@@ -125,6 +125,7 @@ class WeatherScraper(HTMLParser):
 
         data_url_list = self.generate_data_url(self.start_year)
         for url in data_url_list:
+            print('Scraping data from: ')
             print(url)
             myparser = WeatherScraper()
             with urllib.request.urlopen(url) as response:
