@@ -1,4 +1,4 @@
-
+"""This is the main program use GUI """
 import wx
 import wx.xrc
 
@@ -13,10 +13,11 @@ import urllib.request
 
 
 class MyFrame1 (wx.Frame):
+    """This class is to build the form"""
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, pos=wx.DefaultPosition, size=wx.Size(
-            757, 561), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"Weather App", pos=wx.DefaultPosition, size=wx.Size(
+            445, 415), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
@@ -90,10 +91,12 @@ class MyFrame1 (wx.Frame):
 
     # Virtual event handlers, overide them in your derived class
     def full_data(self, event):
+        """This event will download the fullset of data"""
         full_set = DBOperations()
         full_set.create_database()
 
     def update_data(self, event):
+        """This event will update the database"""
         test = WeatherProcessor()
         print('Most recent date in database is', test.newest_date)
         print("Updating Database to today's date")
@@ -101,6 +104,7 @@ class MyFrame1 (wx.Frame):
         print("Updating Database successed")
 
     def create_plot(self, event):
+        """This method create a plot with range of year"""
         start_year = eval(self.m_textCtrl2.GetValue())
         end_year = eval(self.m_textCtrl1.GetValue())
         plot = PlotOperations(start_year, end_year)
@@ -108,6 +112,7 @@ class MyFrame1 (wx.Frame):
         plot.create_plot(plot.weather_data)
 
     def monthly_plot(self, event):
+        """This method create a monthly plot"""
         year = eval(self.m_textCtrl3.GetValue())
         month = eval(self.m_textCtrl4.GetValue())
         plot = PlotOperations()

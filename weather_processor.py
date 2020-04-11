@@ -1,3 +1,4 @@
+"""This is the main program use console """
 from scrape_weather import WeatherScraper
 from db_context_manager import UseDatabase
 from db_operations import DBOperations
@@ -9,7 +10,10 @@ import warnings
 
 
 class WeatherProcessor:
+    """This class is to launch and manage all the other tasks. """
+
     def __init__(self):
+        """Get the lastest date in the database"""
         with UseDatabase('weather.sqlite') as cursor:
             execute_str = '''SELECT * FROM weather ORDER BY sample_date DESC LIMIT 1 '''
             cursor.execute(execute_str)
@@ -43,9 +47,8 @@ class WeatherProcessor:
         return data_url_list
 
     def update_db(self):
+        """Update database to most recent day of year"""
         data_url_list = self.generate_data_url()
-
-        """This is main method to scrape the data"""
         weather = dict()
         for url in data_url_list:
             print('Scraping data from: ')
@@ -60,6 +63,7 @@ class WeatherProcessor:
 
     @staticmethod
     def db_selection():
+        """This is to create selection for update or download fullset"""
         print('Please select from (1)download a full set of weather data or (2)update it')
         x = int(input())
 
@@ -78,6 +82,7 @@ class WeatherProcessor:
 
     @staticmethod
     def plot_selection():
+        """This method is to create weather plot"""
         print(
             'Please enter  year range of interest (from year, to year example: 2000,2017)')
         x = input().split(",")

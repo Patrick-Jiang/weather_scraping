@@ -1,3 +1,4 @@
+"""This module contains database operation """
 from scrape_weather import WeatherScraper
 from pprint import pprint
 from db_context_manager import UseDatabase
@@ -5,8 +6,10 @@ import os
 
 
 class DBOperations():
+    """This is the database operation class"""
 
     def create_database(self):
+        """This method create new weather table in the databse"""
         test = WeatherScraper(
             'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
         weather = test.scrape_weather()
@@ -35,6 +38,7 @@ class DBOperations():
                                 item[1]["Min"], item[1]["Mean"]))
 
     def update_database(self, data):
+        """This method update weather table in the databse"""
         with UseDatabase('weather.sqlite') as cursor:
             sqlite_insert = """INSERT OR IGNORE INTO weather
                                     (sample_date,location,min_temp,max_temp,avg_temp)

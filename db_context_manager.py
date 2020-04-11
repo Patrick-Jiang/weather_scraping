@@ -1,7 +1,10 @@
+"""This module contains context manager"""
 import sqlite3
 
 
 class UseDatabase:
+    """This is context manager class"""
+
     def __init__(self, file_name) -> None:
         self.file_name = file_name
 
