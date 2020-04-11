@@ -5,6 +5,7 @@ from plot_operations import PlotOperations
 from datetime import datetime
 from html.parser import HTMLParser
 import urllib.request
+import warnings
 
 
 class WeatherProcessor:
@@ -88,6 +89,8 @@ class WeatherProcessor:
 
 
 if __name__ == '__main__':
+    warnings.filterwarnings(
+        "ignore", "(?s).*MATPLOTLIBDATA.*", category=UserWarning)
     try:
         WeatherProcessor.db_selection()
         WeatherProcessor.plot_selection()
