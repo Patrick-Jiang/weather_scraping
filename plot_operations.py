@@ -70,4 +70,4 @@ if __name__ == '__main__':
     test = PlotOperations(2000, 2017)
     test.create_weather_data()
     test.create_plot(test.weather_data)
-    # test.create_day_plot(2013,5)
+    test.create_day_plot(2013, 5)
