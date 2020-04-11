@@ -45,13 +45,14 @@ class WeatherScraper(HTMLParser):
         if (tag == 'abbr' and self.is_tbody and self.is_tr):
             if(attrs[0][1] == 'Average' or attrs[0][1] == 'Extreme'):
                 self.end_of_row = True
-            if(self.end_of_row == False):
+            if not self.end_of_row:
                 input_format = "%B %d, %Y"
                 output_format = "%Y-%m-%d"
                 self.date = datetime.strptime(
                     attrs[0][1], input_format).strftime(output_format)
 
-        if (tag == 'td' and self.is_tbody and self.is_tr and self.end_of_row == False):
+        if (tag == 'td' and self.is_tbody and self.is_tr and
+                not self.end_of_row):
             self.is_td = True
             self.end_of_td = False
             self.td_counter += 1
@@ -85,11 +86,17 @@ class WeatherScraper(HTMLParser):
             return
         if(data == 'M' or data == "LegendM" or data == "\u00a0"):
             data = ''
-        if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 1):
+        if(self.is_td and self.is_tbody and
+           self.is_tr and not self.end_of_row and
+                not self.end_of_td and self.td_counter == 1):
             self.daily_temps.update({'Max': data})
-        if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 2):
+        if(self.is_td and self.is_tbody and
+           self.is_tr and not self.end_of_row and
+                not self.end_of_td and self.td_counter == 2):
             self.daily_temps.update({'Min': data})
-        if(self.is_td and self.is_tbody and self.is_tr and self.end_of_row == False and self.end_of_td == False and self.td_counter == 3):
+        if(self.is_td and self.is_tbody and
+           self.is_tr and not self.end_of_row and
+                not self.end_of_td and self.td_counter == 3):
             self.daily_temps.update({'Mean': data})
 
     def generate_data_url(self, start_year, end_year=datetime.now().year):

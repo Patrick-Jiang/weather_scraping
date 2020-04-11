@@ -60,11 +60,15 @@ class WeatherProcessor:
     @staticmethod
     def db_selection():
         print('Please select from (1)download a full set of weather data or (2)update it')
-        x = input()
-        if(x == "1"):
+        x = int(input())
+
+        if x != 1 and x != 2:
+            raise Exception()
+
+        if(x == 1):
             full_set = DBOperations()
             full_set.create_database()
-        if(x == "2"):
+        if(x == 2):
             test = WeatherProcessor()
             print('Most recent date in database is', test.newest_date)
             print("Updating Database to today's date")
@@ -76,12 +80,16 @@ class WeatherProcessor:
         print(
             'Please enter  year range of interest (from year, to year example: 2000,2017)')
         x = input().split(",")
-
+        if int(x[0]) < 1900 or int(x[0]) > 3000 or int(x[1]) < 1900 or int(x[1]) > 3000 or int(x[0]) > int(x[1]):
+            raise Exception()
         test = PlotOperations(int(x[0]), int(x[1]))
         test.create_weather_data()
         test.create_plot(test.weather_data)
 
 
 if __name__ == '__main__':
-    WeatherProcessor.db_selection()
-    WeatherProcessor.plot_selection()
+    try:
+        WeatherProcessor.db_selection()
+        WeatherProcessor.plot_selection()
+    except:
+        print("Please verify inputs!!!")

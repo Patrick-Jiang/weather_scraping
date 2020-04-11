@@ -31,7 +31,8 @@ class DBOperations():
 
             for item in weather.items():
                 cursor.execute(sqlite_insert,
-                               (item[0], "Winnipeg,MB", item[1]["Max"], item[1]["Min"], item[1]["Mean"]))
+                               (item[0], "Winnipeg,MB", item[1]["Max"],
+                                item[1]["Min"], item[1]["Mean"]))
 
     def update_database(self, data):
         with UseDatabase('weather.sqlite') as cursor:
@@ -40,7 +41,8 @@ class DBOperations():
                                     VALUES (?,?,?,?,?);"""
             for item in data.items():
                 cursor.execute(sqlite_insert,
-                               (item[0], "Winnipeg,MB", item[1]["Max"], item[1]["Min"], item[1]["Mean"]))
+                               (item[0], "Winnipeg,MB", item[1]["Max"],
+                                item[1]["Min"], item[1]["Mean"]))
 
 
 if __name__ == '__main__':

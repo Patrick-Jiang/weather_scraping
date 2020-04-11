@@ -1,7 +1,8 @@
 import sqlite3
 
+
 class UseDatabase:
-    def __init__(self,file_name) -> None:
+    def __init__(self, file_name) -> None:
         self.file_name = file_name
 
     def __enter__(self) -> 'cursor':
