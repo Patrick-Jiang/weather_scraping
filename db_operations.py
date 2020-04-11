@@ -11,7 +11,9 @@ class DBOperations():
     def create_database(self):
         """This method create new weather table in the databse"""
         test = WeatherScraper(
-            'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
+            'https://climate.weather.gc.ca/climate_data/daily_data_e.html?'
+            'StationID=27174&timeframe=2&StartYear=1999&'
+            'EndYear=1999&Day=1&Year=2015&Month=11#')
         weather = test.scrape_weather()
 
         if os.path.exists("weather.sqlite"):

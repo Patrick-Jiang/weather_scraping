@@ -15,7 +15,8 @@ class WeatherProcessor:
     def __init__(self):
         """Get the lastest date in the database"""
         with UseDatabase('weather.sqlite') as cursor:
-            execute_str = '''SELECT * FROM weather ORDER BY sample_date DESC LIMIT 1 '''
+            execute_str = \
+                '''SELECT * FROM weather ORDER BY sample_date DESC LIMIT 1 '''
             cursor.execute(execute_str)
             row = cursor.fetchall()
         self.newest_date = row[0][1]
@@ -34,15 +35,19 @@ class WeatherProcessor:
                 for y in range(1, datetime.now().month + 1):
                     current_year = x
                     endMonth = y
-                    url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'.format(
-                        startYear, endYear, endDay, current_year, endMonth)
+                    url = 'https://climate.weather.gc.ca/climate_data/'\
+                        'daily_data_e.html?StationID=27174&timeframe=2&'\
+                        'StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'\
+                        .format(startYear, endYear, endDay, current_year, endMonth)
                     data_url_list.append(url)
             else:
                 for y in range(1, 13):
                     current_year = x
                     endMonth = y
-                    url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'.format(
-                        startYear, endYear, endDay, current_year, endMonth)
+                    url = 'https://climate.weather.gc.ca/climate_data/'\
+                        'daily_data_e.html?StationID=27174&timeframe=2&'\
+                        'StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'\
+                        .format(startYear, endYear, endDay, current_year, endMonth)
                     data_url_list.append(url)
         return data_url_list
 
@@ -64,7 +69,8 @@ class WeatherProcessor:
     @staticmethod
     def db_selection():
         """This is to create selection for update or download fullset"""
-        print('Please select from (1)download a full set of weather data or (2)update it')
+        print('Please select from (1)download a full set of'
+              ' weather data or (2)update it')
         x = int(input())
 
         if x != 1 and x != 2:
@@ -84,10 +90,9 @@ class WeatherProcessor:
     def plot_selection():
         """This method is to create weather plot"""
         print(
-            'Please enter  year range of interest (from year, to year example: 2000,2017)')
+            'Please enter  year range of interest '
+            '(from year, to year example: 2000,2017)')
         x = input().split(",")
-        if int(x[0]) < 1900 or int(x[0]) > 3000 or int(x[1]) < 1900 or int(x[1]) > 3000 or int(x[0]) > int(x[1]):
-            raise Exception()
         test = PlotOperations(int(x[0]), int(x[1]))
         test.create_weather_data()
         test.create_plot(test.weather_data)

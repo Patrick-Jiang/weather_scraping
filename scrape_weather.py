@@ -111,15 +111,19 @@ class WeatherScraper(HTMLParser):
                 for y in range(1, datetime.now().month + 1):
                     current_year = x
                     endMonth = y
-                    url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'.format(
-                        startYear, endYear, endDay, current_year, endMonth)
+                    url = 'https://climate.weather.gc.ca/climate_data/'\
+                        'daily_data_e.html?StationID=27174&timeframe=2&'\
+                        'StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'\
+                        .format(startYear, endYear, endDay, current_year, endMonth)
                     data_url_list.append(url)
             else:
                 for y in range(1, 13):
                     current_year = x
                     endMonth = y
-                    url = 'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'.format(
-                        startYear, endYear, endDay, current_year, endMonth)
+                    url = 'https://climate.weather.gc.ca/climate_data/'\
+                        'daily_data_e.html?StationID=27174&timeframe=2&'\
+                        'StartYear={}&EndYear={}&Day={}&Year={}&Month={}#'\
+                        .format(startYear, endYear, endDay, current_year, endMonth)
                     data_url_list.append(url)
         return data_url_list
 
@@ -144,7 +148,9 @@ class WeatherScraper(HTMLParser):
 
 if __name__ == '__main__':
     test = WeatherScraper(
-        'https://climate.weather.gc.ca/climate_data/daily_data_e.html?StationID=27174&timeframe=2&StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
+        'https://climate.weather.gc.ca/climate_data/'
+        'daily_data_e.html?StationID=27174&timeframe=2&'
+        'StartYear=1999&EndYear=1999&Day=1&Year=2015&Month=11#')
     weather = test.scrape_weather()
     with open('weather_all.json', 'w') as fp:
         json.dump(weather, fp)

@@ -25,8 +25,10 @@ class PlotOperations():
                 for year in range(start_year, end_year + 1):
                     self.month = x
                     year = str(year)
-                    cursor.execute("SELECT avg_temp FROM weather WHERE sample_date LIKE ?", ('%{}%'.format(
-                        year + '-' + str(x).zfill(2)),))
+                    cursor.execute(
+                        "SELECT avg_temp FROM weather"
+                        " WHERE sample_date LIKE ?",
+                        ('%{}%'.format(year + '-' + str(x).zfill(2)),))
                     rows = cursor.fetchall()
                     for row in rows:
                         if '{}'.format(row[0]) != '':
@@ -51,8 +53,9 @@ class PlotOperations():
         monthly_list = []
         year = str(year)
         with UseDatabase('weather.sqlite') as cursor:
-            cursor.execute("SELECT avg_temp FROM weather WHERE sample_date LIKE ?",
-                           ('%{}%'.format(year + '-' + str(month).zfill(2)),))
+            cursor.execute(
+                "SELECT avg_temp FROM weather WHERE sample_date LIKE ?",
+                ('%{}%'.format(year + '-' + str(month).zfill(2)),))
             rows = cursor.fetchall()
             for row in rows:
                 if '{}'.format(row[0]) != '':
